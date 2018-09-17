@@ -1,0 +1,17 @@
+xbarnumber:2121
+area:0.000337932
+energy:0.0122055
+latency:0.0673156
+power:61.2593
+accuracy:0
+area_multi:0.000233715
+power_multi:56.6385
+latency_multi:0.058813
+read_sep:128
+adposition:1
+bit_level:8
+adderposition:0
+pulseposition:0
+linetech:90
+celltype:1
+xbarsize:256

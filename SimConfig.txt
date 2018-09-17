@@ -1,0 +1,23 @@
+// Simulation_Level = Estimation/Behavior/Circuit
+// Target_Outputs = Area/Latency/Power/Energy for estimation
+// Target_Outputs = Voltage/Current/Resistence/Function for behavior & circuit
+// Network_Scale: use two elements to represent each layer: {input_number, output_number}, input_number = kernel_size^2*#input_channel, output_number = #output_channel
+// Computation_Time: # of convolutions in each layer (FC layer is 1)
+
+Simulation_Level Estimation
+Target_Outputs Energy
+Application ANN
+Application_Scale 16
+Network_Scale 9 64 576 64 576 128 1152 128 1152 256 2304 256 2304 256 2304 512 4608 512 4608 512 4608 512 4608 512 4608 512 25088 4096 4096 4096 4096 1000
+Weight_Polarity 2
+Cell_Type 1T1R
+RRAM_Model ideal
+RRAM_Bit_Levels 8
+Transistor_Tech(nm) 130
+Min_Crossbar_Size 256
+Max_Crossbar_Size 256
+Write_Method ideal
+Line_Tech 22
+Action_Type Calculation
+Computation_Time 49284 49284 12100 12100 2916 2916 2916 676 676 676 144 144 144 1 1 1
+Pipeline 0
