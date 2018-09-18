@@ -4,20 +4,105 @@
 // Network_Scale: use two elements to represent each layer: {input_number, output_number}, input_number = kernel_size^2*#input_channel, output_number = #output_channel
 // Computation_Time: # of convolutions in each layer (FC layer is 1)
 
-Simulation_Level Estimation
-Target_Outputs Energy
-Application ANN
-Application_Scale 16
-Network_Scale 9 64 576 64 576 128 1152 128 1152 256 2304 256 2304 256 2304 512 4608 512 4608 512 4608 512 4608 512 4608 512 25088 4096 4096 4096 4096 1000
-Weight_Polarity 2
-Cell_Type 1T1R
-RRAM_Model ideal
-RRAM_Bit_Levels 8
-Transistor_Tech(nm) 130
-Min_Crossbar_Size 256
-Max_Crossbar_Size 256
-Write_Method ideal
-Line_Tech 22
-Action_Type Calculation
-Computation_Time 49284 49284 12100 12100 2916 2916 2916 676 676 676 144 144 144 1 1 1
-Pipeline 0
+
+config {
+	Simulation_Level Estimation
+	Target_Outputs Energy
+	Application CNN
+	Application_Scale 9
+	Weight_Polarity 2
+	Cell_Type 1T1R
+	RRAM_Model ideal
+	RRAM_Bit_Levels 8
+	Transistor_Tech(nm) 130
+	Min_Crossbar_Size 256
+	Max_Crossbar_Size 256
+	Write_Method ideal
+	Line_Tech 22
+	Action_Type Calculation
+	Pipeline 0
+}
+
+Layer1 {
+	Name Conv
+	Inputsize 112
+	Outputsize 55
+	Kernelsize 11
+	Stride 4
+	Inputchannel 3
+	Outputchannel 96
+}
+
+Layer2 {
+	Name Conv
+	Inputsize 54
+	Outputsize 27
+	Kernelsize 5
+	Stride 1
+	Inputchannel 96
+	Outputchannel 256
+}
+
+Layer3 {
+	Name Conv
+	Inputsize 13
+	Outputsize 13
+	Kernelsize 3
+	Stride 1
+	Inputchannel 256
+	Outputchannel 384
+}
+
+Layer3 {
+	Name Conv
+	Inputsize 13
+	Outputsize 13
+	Kernelsize 3
+	Stride 1
+	Inputchannel 256
+	Outputchannel 384
+}
+
+Layer4 {
+	Name Conv
+	Inputsize 13
+	Outputsize 13
+	Kernelsize 3
+	Stride 1
+	Inputchannel 384
+	Outputchannel 384
+}
+
+Layer5 {
+	Name Conv
+	Inputsize 13
+	Outputsize 13
+	Kernelsize 3
+	Stride 1
+	Inputchannel 384
+	Outputchannel 256
+}
+
+Layer6 {
+	Name FC
+	Inputlength 9216
+	Outputlength 4096
+}
+
+Layer7 {
+	Name FC
+	Inputlength 4096
+	Outputlength 4096
+}
+
+Layer8 {
+	Name FC
+	Inputlength 4096
+	Outputlength 1000
+}
+
+Layer9 {
+	Name FC
+	Inputlength 1000
+	Outputlength 10
+}
