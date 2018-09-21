@@ -7,6 +7,7 @@ double output_sig;
 double signalsize;
 int netcolumn;
 int netrow;
+double utilization;
 double bandwidth;
 double flags[4];
 double adders_area,neuron_area,area_p;
@@ -15,7 +16,7 @@ double adders_power,neuron_power,power_p;
 
 ///////////bandwith calculation (determin_sig and determin_net) //////////////
 void determin_sig(int xbarsize,int adderposition,int sig_bit,int cell_bit,int adposition){
-	control = 2 ; //if adders are inside, arch needs two additional column signals (input and output)
+	control = 2; //if adders are inside, arch needs two additional column signals (input and output)
     input_sig = 2*(log((double)xbarsize)/log(2.0)) + sig_bit*xbarsize + control+ adderposition * (sig_bit+cell_bit);
     flags[0] = 1;
     output_neighbor = (sig_bit+cell_bit)*adposition;
@@ -27,6 +28,7 @@ void determin_net(int xbarsize,int rowsize,int columnsize,int signalsize){
 	netcolumn = ceil((double)columnsize/xbarsize);
     netrow = ceil((double)rowsize/xbarsize);
     bandwidth = signalsize * netrow;
+    utilization = (double)columnsize*(double)rowsize/((double)netrow*(double)netcolumn*(double)xbarsize*(double)xbarsize);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -159,7 +161,7 @@ double cal_xbar_p(int tech,int celltype,int xbarsize,double resis_range,int acti
 //     0.1*0.1/(500+2.9732*64+1.3*90/130*Rn/0.9+1.3*90/130/0.9*Rn*Rp/(Rn+Rp))*128*128+0.0024;
     if (action_type == 2)
         return cell_r_p * xbarsize*xbarsize;
-    return 0;
+    return cell_r_p * xbarsize;
 }
 /*void cal_adder_p(int tech,int sig_bit){
 	adder_power = 0.1e-3;
@@ -177,14 +179,10 @@ double cal_da_p(int tech,int sig_bit){
 void periphery_area(Technology technology,int xbarsize,int netrow,int netcolumn,int adderposition,int pulseposition,int sig_bit,int application){
 	
 	Cal_Adder  Cal_Adder_temp(technology,sig_bit);
-	if (adderposition == 0) // add out of xbar
-        adders_area = Cal_Adder_temp.Adder_Area() * (netrow-1) * netcolumn *xbarsize;
-    else
-        adders_area = 0;
+	adders_area = (1-adderposition)*Cal_Adder_temp.Adder_Area() * (netrow-1) * netcolumn *xbarsize;
     neuron_area = neuronsize(technology.featureSizeInNano,sig_bit,application) * xbarsize * netcolumn;
     pulse_area = (1-pulseposition) * pulsesize(technology.featureSizeInNano);
     area_p = adders_area + neuron_area + pulse_area;
-    flags[0]= 1;
 }
 double neuronsize(int tech,int sig_bit,int application){
 	if(tech<0)
@@ -198,14 +196,10 @@ double neuronsize(int tech,int sig_bit,int application){
 void periphery_latency_c(Technology technology,int netrow,int adderposition,int pulseposition,int sig_bit,int application){
 	
 	Cal_Adder Cal_Adder_temp(technology,sig_bit);
-	if (adderposition == 0) // add out of xbar
-        adders_latency = Cal_Adder_temp.Adder_Latency() * ceil(log((double)netrow)/log(2.0));
-    else
-        adders_latency = 0;
+	adders_latency = (1-adderposition)*(Cal_Adder_temp.Adder_Latency() * ceil(log((double)netrow)/log(2.0)));
     neuron_latency = cal_neuron_l(technology.featureSizeInNano,sig_bit,application);
     pulse_latency = (1-pulseposition) * 1.6e-9;
     latency_p = adders_latency + neuron_latency + pulse_latency;
-    flags[0] = 1;
 }
 double cal_neuron_l(int tech,int sig_bit,int application){
 	if (application == 0)
@@ -213,25 +207,24 @@ double cal_neuron_l(int tech,int sig_bit,int application){
     else
         return 6e-8+ cal_da_l(tech,sig_bit);
 }
-void periphery_power_c(Technology tech,int xbarsize,int netrow,int netcolumn, int adderposition,int pulseposition,int sig_bit,int application,double adders_latency,double neuron_latency,double pulse_latency){
+void periphery_power_c(Technology tech,int xbarsize,int netrow,int netcolumn, int adderposition,int pulseposition,int sig_bit,int application,int inputlength, int outputchannel){
 	
 	Cal_Adder Cal_Adder_temp(tech,sig_bit);
 	if (adderposition == 0){ // add out of xbar
         adder_act=Cal_Adder_temp.Adder_Power_Dynamic();
 		adder_leak= Cal_Adder_temp.Adder_Power_Leakage();
-        adders_power = (adder_act * (netrow-1) * netcolumn) ;//*adders_latency ;//+adder_leak* (netrow-1) * netcolumn*(neuron_latency+pulse_latency))/(adders_latency + neuron_latency + pulse_latency) ;
+        adders_power = (adder_act * (netrow-1) * outputchannel) ;//*adders_latency ;//+adder_leak* (netrow-1) * netcolumn*(neuron_latency+pulse_latency))/(adders_latency + neuron_latency + pulse_latency) ;
 	}
 	else
         adders_power = 0;
-    neuron_power = cal_neuron_p(tech.featureSizeInNano ,sig_bit,application) * xbarsize * netcolumn;
-//     neuron_power = neuron_power * neuron_latency/(adders_latency + neuron_latency + pulse_latency);
+    neuron_power = cal_neuron_p(tech.featureSizeInNano ,sig_bit,application,netrow,netcolumn,inputlength,outputchannel);
+	//neuron_power = neuron_power * neuron_latency/(adders_latency + neuron_latency + pulse_latency);
     pulse_power = (1-pulseposition) * 11.6e-3;// *pulse_latency/(adders_latency + neuron_latency + pulse_latency);
     power_p = adders_power + neuron_power + pulse_power;
-    flags[0] = 1;
 }
-double cal_neuron_p(int tech,int sig_bit,int application){
+double cal_neuron_p(int tech,int sig_bit,int application,int netrow, int netcolumn, int inputlength, int outputchannel){
 	if (application == 0)
-        return cal_ad_p(tech,sig_bit) + 0 + cal_da_p(tech,sig_bit);
+        return cal_ad_p(tech,sig_bit)*outputchannel*netrow + 0 + cal_da_p(tech,sig_bit)*inputlength*netcolumn;
     else
         return 1.5e-3+ cal_da_p(tech,sig_bit);
 }

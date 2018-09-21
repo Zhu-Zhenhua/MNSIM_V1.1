@@ -21,9 +21,7 @@ void unit_latency_c(Technology technology,int celltype,int xbarsize,int adpositi
     read_latency = cal_read_l(technology.featureSizeInNano,xbarsize,action_type);
     
     latency_u = xbar_latency + adda_latency + adder_latency + decoder_latency + write_latency + read_latency;
-    
-    flags[0] = 1;
-    
+        
     if (read_seperate > 0)
         latency_u =  xbar_latency + cal_da_l(technology.featureSizeInNano,sig_bit) +  write_latency+(adder_latency + decoder_latency + read_latency * ceil((double)xbarsize/read_seperate));
 }

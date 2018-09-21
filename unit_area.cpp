@@ -25,16 +25,15 @@ void unit_area_c(Technology technology,int celltype,int xbarsize,int adposition,
 		write_area = writesize(technology.featureSizeInNano,celltype);
 		
 
-		//what does flag mean??
 		if (application ==0){
 			Sub_area =  Cal_Adder_temp.Adder_Area() * xbarsize;
-			area_u = xbar_area*2 + ad_area*2 + da_area + adder_area + pulse_area + decoder_area +read_area + write_area + Sub_area;
-			flags[0]=xbar_area*2;flags[1]=ad_area*2;flags[2]=da_area+read_area;flags[3]=adder_area+Sub_area+pulse_area+decoder_area+write_area;
-			//    flags = 1;
+			area_u = xbar_area*2 + ad_area*2 + da_area*2 + adder_area + pulse_area + decoder_area +read_area + write_area + Sub_area;
+			//	flags[0]=xbar_area*2;flags[1]=ad_area*2;flags[2]=da_area+read_area;flags[3]=adder_area+Sub_area+pulse_area+decoder_area+write_area;
+			//	flags = 1;
 		}
 		else{
-			area_u = xbar_area + ad_area + adder_area + pulse_area + decoder_area +read_area + write_area;//adda_area not defined, change to ad_area
-			flags[0] = 1;
+			area_u = xbar_area + ad_area + da_area + pulse_area + decoder_area +read_area + write_area;//adda_area not defined, change to ad_area
+			//flags[0] = 1;
 		}
 	}
 	else{		// seperate
@@ -59,12 +58,12 @@ void unit_area_c(Technology technology,int celltype,int xbarsize,int adposition,
     
 		if (application ==0){
 			Sub_area =  Cal_Adder_temp.Adder_Area()*read_seperate ;
-			area_u = xbar_area*2 + ad_area*2 + da_area + adder_area + pulse_area + decoder_area +read_area + write_area + Sub_area;
-			flags[0]=xbar_area*2;flags[1]=ad_area*2;flags[2]=da_area+read_area;flags[3]=adder_area+Sub_area+pulse_area+decoder_area+write_area;
+			area_u = xbar_area*2 + ad_area*2 + da_area*2 + adder_area + pulse_area + decoder_area +read_area + write_area + Sub_area;
+			//flags[0]=xbar_area*2;flags[1]=ad_area*2;flags[2]=da_area+read_area;flags[3]=adder_area+Sub_area+pulse_area+decoder_area+write_area;
 		}
 		else{
 			area_u = xbar_area + ad_area + adder_area + pulse_area + decoder_area +read_area + write_area;
-			flags[0] = 1;
+			//flags[0] = 1;
 		}
 	}
 	//return area_u;

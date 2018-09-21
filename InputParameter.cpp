@@ -21,8 +21,8 @@ InputParameter::InputParameter() {
 	maxBtLv = 16;
 	minRRang = 1000;
 	maxRRang = 1000000;
-	minAdder = 0;
-	maxAdder = 0;
+	minAdder = 1;
+	maxAdder = 1;
 	minLine = 22;
 	maxLine = 90;
 }
@@ -50,7 +50,8 @@ void InputParameter::ReadInputParameterFromFile(string filename){
     	getline(fin,temp);
     	cfgtxt[i] = temp;
     }
-    int config_begin,config_end;
+    int config_begin = 0;
+    int config_end = 0;
     bool flag = true;
     i = 0;
     while(flag){
@@ -70,12 +71,12 @@ void InputParameter::ReadInputParameterFromFile(string filename){
     }
 
 	for (i=config_begin;i<=config_end;i++){
-		if(cfgtxt[i].find("Simulation_Level")!=string::npos)      
-            SimLv.assign(cfgtxt[i],sizeof("Simulation_Level"),cfgtxt[i].length()-sizeof("Simulation_Level"));   
-        else if(cfgtxt[i].find("Target_Outputs")!=string::npos)
-            Target_Output.assign(cfgtxt[i],sizeof("Target_Outputs"),cfgtxt[i].length()-sizeof("Target_Outputs"));
+		if(cfgtxt[i].find("Simulation_Level ")!=string::npos)      
+            SimLv.assign(cfgtxt[i],sizeof("Simulation_Level "),cfgtxt[i].length()-sizeof("Simulation_Level"));   
+        else if(cfgtxt[i].find("Target_Outputs ")!=string::npos)
+            Target_Output.assign(cfgtxt[i],sizeof("Target_Outputs "),cfgtxt[i].length()-sizeof("Target_Outputs"));
         else if(cfgtxt[i].find("Application ")!=string::npos)
-            Application.assign(cfgtxt[i],sizeof("Application"),cfgtxt[i].length()-sizeof("Application"));
+            Application.assign(cfgtxt[i],sizeof("Application "),cfgtxt[i].length()-sizeof("Application"));
        	else if(cfgtxt[i].find("Application_Scale")!=string::npos){
             temp.assign(cfgtxt[i],sizeof("Application_Scale"),temp.length()-sizeof("Application_Scale")); 
 			AppScale = std::stoi (temp,nullptr,0);
@@ -84,14 +85,14 @@ void InputParameter::ReadInputParameterFromFile(string filename){
             temp.assign(cfgtxt[i],sizeof("Weight_Polarity"),temp.length()-sizeof("Weight_Polarity")); 
 			WeightPolar = std::stoi (temp,nullptr,0);
 		}
-		else if(cfgtxt[i].find("Cell_Type")!=string::npos){
-            temp.assign(cfgtxt[i],sizeof("Cell_Type"),temp.length()-sizeof("Cell_Type"));
+		else if(cfgtxt[i].find("Cell_Type ")!=string::npos){
+            temp.assign(cfgtxt[i],sizeof("Cell_Type "),temp.length()-sizeof("Cell_Type"));
 			stringstream stream(temp);
 			stream>>minCell;
 			maxCell=minCell;
 		}
-		else if(cfgtxt[i].find("RRAM_Model")!=string::npos)
-            RRAMModel.assign(cfgtxt[i],sizeof("RRAM_Model"),cfgtxt[i].length()-sizeof("RRAM_Model"));
+		else if(cfgtxt[i].find("RRAM_Model ")!=string::npos)
+            RRAMModel.assign(cfgtxt[i],sizeof("RRAM_Model "),cfgtxt[i].length()-sizeof("RRAM_Model"));
         else if(cfgtxt[i].find("RRAM_Bit_Levels")!=string::npos){
             temp.assign(cfgtxt[i],sizeof("RRAM_Bit_Levels"),temp.length()-sizeof("RRAM_Bit_Levels")); 
 			minBtLv = std::stoi (temp,nullptr,0);
@@ -109,15 +110,15 @@ void InputParameter::ReadInputParameterFromFile(string filename){
             temp.assign(cfgtxt[i],sizeof("Max_Crossbar_Size"),temp.length()-sizeof("Max_Crossbar_Size")); 
 			maxXbarSize = std::stoi(temp,nullptr,0);
 		}
-		else if(cfgtxt[i].find("Write_Method")!=string::npos)
-            WriteMth.assign(cfgtxt[i],sizeof("Write_Method"),cfgtxt[i].length()-sizeof("Write_Method"));
+		else if(cfgtxt[i].find("Write_Method ")!=string::npos)
+            WriteMth.assign(cfgtxt[i],sizeof("Write_Method "),cfgtxt[i].length()-sizeof("Write_Method"));
         else if(cfgtxt[i].find("Line_Tech")!=string::npos){
             temp.assign(cfgtxt[i],sizeof("Line_Tech"),temp.length()-sizeof("Line_Tech")); 
 			minLine = std::stoi(temp,nullptr,0);
 			maxLine = std::stoi(temp,nullptr,0);
 		}
 		else if(cfgtxt[i].find("Action_Type ")!=string::npos)
-            Action_type.assign(cfgtxt[i],sizeof("Action_Type"),cfgtxt[i].length()-sizeof("Action_Type"));
+            Action_type.assign(cfgtxt[i],sizeof("Action_Type "),cfgtxt[i].length()-sizeof("Action_Type"));
         else if(cfgtxt[i].find("Pipeline")!=string::npos){
             temp.assign(cfgtxt[i],sizeof("Pipeline"),temp.length()-sizeof("Pipeline"));
             Pipeline = std::stoi(temp,nullptr,0);
@@ -211,9 +212,7 @@ void InputParameter::ReadInputParameterFromFile(string filename){
 		else
 			;
 	}
-    int hhhhhh=1;
-    cout<<hhhhhh<<endl;
-	/*
+    /*
 	for(i=0;i<18;i++){						
         if(cfgtxt[i].find("Simulation_Level")!=string::npos)      
             SimLv.assign(cfgtxt[i],sizeof("Simulation_Level"),cfgtxt[i].length()-sizeof("Simulation_Level"));   

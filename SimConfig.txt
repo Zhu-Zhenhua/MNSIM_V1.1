@@ -1,8 +1,6 @@
 // Simulation_Level = Estimation/Behavior/Circuit
 // Target_Outputs = Area/Latency/Power/Energy for estimation
 // Target_Outputs = Voltage/Current/Resistence/Function for behavior & circuit
-// Network_Scale: use two elements to represent each layer: {input_number, output_number}, input_number = kernel_size^2*#input_channel, output_number = #output_channel
-// Computation_Time: # of convolutions in each layer (FC layer is 1)
 
 
 config {
@@ -11,7 +9,7 @@ config {
 	Application CNN
 	Application_Scale 9
 	Weight_Polarity 2
-	Cell_Type 1T1R
+	Cell_Type 0T1R
 	RRAM_Model ideal
 	RRAM_Bit_Levels 8
 	Transistor_Tech(nm) 130

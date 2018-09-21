@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
 	//read configs  &  init configs
 	inputParameter->ReadInputParameterFromFile(inputFileName);
-	if (inputParameter->Application[0] == 'a' ||inputParameter->Application[0] == 'A')
+	if (inputParameter->Application[0] == 'c' ||inputParameter->Application[0] == 'C') //Convolution
         application = 0;
     else
         application = 1;
@@ -157,12 +157,12 @@ int main(int argc, char *argv[]) {
                                 if (xbarsize<inputParameter->minXbarSize || xbarsize > inputParameter->maxXbarSize)
                                     cout<<"error:xbarsize over the limit"<<endl;
                                 else
-									for (double netlevel = 1;netlevel<=inputParameter->AppScale;netlevel++) { //-1
+									for (int netlevel = 1;netlevel<=inputParameter->AppScale;netlevel++) { //-1
 										if (bit_level != 0)
 											cell_bit = bit_level;
 										//calculate bandwidth
 										determin_sig(xbarsize,adderposition,inputParameter->sig_bit,cell_bit,adposition);
-										determin_net(xbarsize,inputParameter->NetScale[2*(int)netlevel-1-1],inputParameter->NetScale[2*(int)netlevel-1],signalsize);
+										determin_net(xbarsize,inputParameter->InputLength[netlevel-1],inputParameter->OutputChannel[netlevel-1],signalsize);
 											
 										unit_area_c(*technology,celltype,xbarsize,adposition,adderposition,pulseposition,inputParameter->sig_bit,application,inputParameter->rramtech,read_sep);
 											
@@ -172,9 +172,9 @@ int main(int argc, char *argv[]) {
 											
 										periphery_area(*technology,xbarsize, netrow, netcolumn, adderposition,pulseposition,inputParameter->sig_bit,application);
 											
-										periphery_latency_c( *technology,netrow, adderposition,pulseposition,inputParameter->sig_bit,application);
+										periphery_latency_c(*technology,netrow, adderposition,pulseposition,inputParameter->sig_bit,application);
 										    
-										periphery_power_c(*technology,xbarsize, netrow, netcolumn, adderposition,pulseposition,inputParameter->sig_bit,application,adders_latency,neuron_latency,pulse_latency);
+										periphery_power_c(*technology,xbarsize, netrow, netcolumn, adderposition,pulseposition,inputParameter->sig_bit,application,inputParameter->InputLength[netlevel-1],inputParameter->OutputChannel[netlevel-1]);
 											
 
 										accuracy_c(xbarsize,linetech,inputParameter->sig_bit,cell_bit,inputParameter->maxRRang,input_err[(int)netlevel-1]);
@@ -182,22 +182,21 @@ int main(int argc, char *argv[]) {
 										input_err[(int)netlevel] = accuracy;
 											
 										area = area_u * netrow * netcolumn + area_l + area_p ;//+ area_r + area_w;
-										//area_flags = area_flags * netrow * netcolumn;
-										if (adderposition == 0) {
-											energy = power_u * latency_u * netrow * netcolumn + power_l * latency_l + power_p * latency_p;// + power_r + power_w;
-											latency = latency_u + latency_l + latency_p;
+										energy = utilization * power_u * latency_u * netrow * netcolumn + power_l * latency_l + power_p * latency_p;
+										latency = latency = latency_u + latency_l + latency_p;
+
+										latency_multi = latency_u;
+
+										/*if (adderposition == 0) {
 											latency_multi = latency_u;
 										}
 										else {
-											energy = power_u * latency_u * netrow * netcolumn + power_l * latency_l + power_p * latency_p;
-											latency = latency_u * netrow + latency_l + latency_p;
 											latency_multi = latency_u * netrow;
-										}
-										power_multi = power_u * netrow * netcolumn;
+										}*/
+										power_multi = utilization * power_u * netrow * netcolumn;
 										//power_flags = power_flags * netrow * netcolumn;
 										area_multi = area_u * netrow * netcolumn;
-										power = power_u  * netrow * netcolumn + power_l  + power_p ;
-										energy = power * latency;
+										power = utilization * power_u  * netrow * netcolumn + power_l  + power_p ;
 											
 										equal(netlevel,area,energy,latency,power,accuracy,area_multi,power_multi,latency_multi,read_sep,adposition,bit_level,adderposition,pulseposition,linetech,celltype,xbarsize);
 
@@ -228,19 +227,19 @@ int main(int argc, char *argv[]) {
 			AAAestrslt[temp_count][0] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][0];
 			AAAestrslt[temp_count][1] = AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][1];
 			AAAestrslt[temp_count][2] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][2];
-			AAAestrslt[temp_count][3] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][3]*(inputParameter->Computation_Time[netlevel_temp-1]);
+			AAAestrslt[temp_count][3] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][3]*(inputParameter->ComputationTime[netlevel_temp-1]);
 			if(inputParameter->Pipeline == 0) //not pipelined
-				AAAestrslt[temp_count][4] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][4]*(inputParameter->Computation_Time[netlevel_temp-1]);
+				AAAestrslt[temp_count][4] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][4]*(inputParameter->ComputationTime[netlevel_temp-1]);
 			else if (netlevel_temp == 1)
-				AAAestrslt[temp_count][4] = AAestrslt[((temp_count-1) * inputParameter->AppScale + 1)][4]*(inputParameter->Computation_Time[0]);
+				AAAestrslt[temp_count][4] = AAestrslt[((temp_count-1) * inputParameter->AppScale + 1)][4]*(inputParameter->ComputationTime[0]);
 			else
-				AAAestrslt[temp_count][4] = (AAAestrslt[temp_count][4] > AAestrslt[((temp_count-1) * inputParameter->AppScale + netlevel_temp)][4]*(inputParameter->Computation_Time[netlevel_temp-1]))? AAAestrslt[temp_count][4] : AAestrslt[((temp_count-1) * inputParameter->AppScale + netlevel_temp)][4]*(inputParameter->Computation_Time[netlevel_temp-1]);
+				AAAestrslt[temp_count][4] = (AAAestrslt[temp_count][4] > AAestrslt[((temp_count-1) * inputParameter->AppScale + netlevel_temp)][4]*(inputParameter->ComputationTime[netlevel_temp-1]))? AAAestrslt[temp_count][4] : AAestrslt[((temp_count-1) * inputParameter->AppScale + netlevel_temp)][4]*(inputParameter->ComputationTime[netlevel_temp-1]);
 			AAAestrslt[temp_count][5] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][5];
 			AAAestrslt[temp_count][6] = 0; //will update later
 			AAAestrslt[temp_count][7] = AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][7];
 			AAAestrslt[temp_count][8] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][8];
 			AAAestrslt[temp_count][9] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][9];
-			AAAestrslt[temp_count][10] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][10]*(inputParameter->Computation_Time[netlevel_temp-1]);
+			AAAestrslt[temp_count][10] += AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][10]*(inputParameter->ComputationTime[netlevel_temp-1]);
 			for(int i = 11;i<19;i++)
 				AAAestrslt[temp_count][i] = AAestrslt[((temp_count-1) * inputParameter->AppScale +netlevel_temp)][i];
 		}
