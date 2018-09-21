@@ -36,7 +36,7 @@ void periphery_area(Technology technology,int xbarsize,int netrow,int netcolumn,
 double neuronsize(int tech,int sig_bit,int application);
 void periphery_latency_c(Technology technology,int netrow,int adderposition,int pulseposition,int sig_bit,int application);//Õ‚≤ø—” ±
 double cal_neuron_l(int tech,int sig_bit,int application);
-void periphery_power_c(Technology tech,int xbarsize,int netrow,int netcolumn, int adderposition,int pulseposition,int sig_bit,int application,double adders_latency,double neuron_latency,double pulse_latency);
-double cal_neuron_p(int tech,int sig_bit,int application);
+void periphery_power_c(Technology tech,int xbarsize,int netrow,int netcolumn, int adderposition,int pulseposition,int sig_bit,int application,int inputlength, int outputchannel);
+double cal_neuron_p(int tech,int sig_bit,int application,int netrow, int netcolumn, int inputlength, int outputchannel);
 
 #endif

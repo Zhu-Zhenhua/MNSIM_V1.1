@@ -7,14 +7,13 @@ void unit_power_c(Technology technology,int celltype,int xbarsize,int adposition
  
 	Cal_Adder Cal_Adder_temp(technology,sig_bit);
 	Cal_Decoder Cal_Adder_Decoder(technology,celltype,xbarsize);
+	adder_act = Cal_Adder_temp.Adder_Power_Dynamic();
+	adder_leak = Cal_Adder_temp.Adder_Power_Leakage();
 	if (read_seperate == 0){
 		xbar_power = cal_xbar_p(tech,celltype,xbarsize,resis_range,action_type);
 		if (action_type == 2){
-			///cal_adder_p(technology,sig_bit);
-	//         adder_avg_p = (adder_act * (netrow-1) + adder_leak * ((netrow-1)*netrow+netrow))/(netrow^2);
-
-			//////////////adder_act == 0?????
-
+			//cal_adder_p(technology,sig_bit);
+	        //adder_avg_p = (adder_act * (netrow-1) + adder_leak * ((netrow-1)*netrow+netrow))/(netrow^2);
 			adder_power = adderposition * adder_act * xbarsize;
 		}
 		else
@@ -29,21 +28,20 @@ void unit_power_c(Technology technology,int celltype,int xbarsize,int adposition
     
 		if (application ==0){
 			Sub_power = adder_act * xbarsize;
-			power_u = xbar_power*2 + adder_power + ad_power*2 + da_power + decoder_power + read_power + write_power + Sub_power;
-			flags[0]=xbar_power*2;flags[1]=da_power;flags[2]=ad_power*2+read_power;flags[3]=adder_power+decoder_power+write_power+Sub_power;
-	//       power_u = xbar_power*2 *xbar_latency + adder_power*adder_latency + (ad_power*2 + da_power)*adda_latency + decoder_power*decoder_latency + Sub_power*adder_latency + read_power*read_latency + write_power*write_latency;
+			power_u = xbar_power*2 + adder_power + ad_power*2 + da_power*2 + decoder_power + read_power + write_power + Sub_power;
+	        //power_u = xbar_power*2 *xbar_latency + adder_power*adder_latency + (ad_power*2 + da_power)*adda_latency + decoder_power*decoder_latency + Sub_power*adder_latency + read_power*read_latency + write_power*write_latency;
 		}
 		else{
 			power_u = xbar_power + adder_power + ad_power + da_power + decoder_power + read_power + write_power;
-	//         power_u = xbar_power *xbar_latency + adder_power*adder_latency + (ad_power + da_power)*adda_latency + decoder_power*decoder_latency  + read_power*read_latency + write_power*write_latency;
+	        //power_u = xbar_power *xbar_latency + adder_power*adder_latency + (ad_power + da_power)*adda_latency + decoder_power*decoder_latency  + read_power*read_latency + write_power*write_latency;
 		}
 	 }
 	else{
 		xbar_power = cal_xbar_p(tech,celltype,xbarsize,resis_range,action_type)/xbarsize;
 		if (action_type == 2){
-			///cal_adder_p(technology,sig_bit);
-	//         adder_avg_p = (adder_act * (netrow-1) + adder_leak * ((netrow-1)*netrow+netrow))/(netrow^2);
-			adder_power = adderposition * Cal_Adder_temp.Adder_Power_Dynamic() * xbarsize;
+			//cal_adder_p(technology,sig_bit);
+			//adder_avg_p = (adder_act * (netrow-1) + adder_leak * ((netrow-1)*netrow+netrow))/(netrow^2);
+			adder_power = adderposition * adder_act * xbarsize;
 		}
 		else 
 			adder_power = 0;
@@ -57,12 +55,11 @@ void unit_power_c(Technology technology,int celltype,int xbarsize,int adposition
 
 		if (application ==0){
 			Sub_power = adder_act ;
-			power_u = xbar_power*2 + adder_power + ad_power*2 + da_power + decoder_power + read_power + write_power + Sub_power;
-			flags[0]=xbar_power*2;flags[1]=da_power;flags[2]=ad_power*2+read_power;flags[3]=adder_power+decoder_power+write_power+Sub_power;
-	//         power_u = xbar_power*2 *xbar_latency + adder_power*adder_latency + (ad_power*2 + da_power)*adda_latency + decoder_power*decoder_latency + Sub_power*adder_latency + read_power*read_latency + write_power*write_latency;
+			power_u = xbar_power*2 + adder_power + ad_power*2 + da_power*2 + decoder_power + read_power + write_power + Sub_power;
+			// power_u = xbar_power*2 *xbar_latency + adder_power*adder_latency + (ad_power*2 + da_power)*adda_latency + decoder_power*decoder_latency + Sub_power*adder_latency + read_power*read_latency + write_power*write_latency;
 		}
 		else
 			power_u = xbar_power + adder_power + ad_power + da_power + decoder_power + read_power + write_power;
-	//         power_u = xbar_power *xbar_latency + adder_power*adder_latency + (ad_power + da_power)*adda_latency + decoder_power*decoder_latency  + read_power*read_latency + write_power*write_latency;
+			//power_u = xbar_power *xbar_latency + adder_power*adder_latency + (ad_power + da_power)*adda_latency + decoder_power*decoder_latency  + read_power*read_latency + write_power*write_latency;
 		}
  }

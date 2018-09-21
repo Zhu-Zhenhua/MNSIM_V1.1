@@ -34,7 +34,9 @@ public:
 	int minLine;
 	int maxLine;
 	int *NetScale;
-	int *Computation_Time;
+	int *ComputationTime;
+	int *OutputChannel;
+	int *InputLength;
 	string SimLv;
     string Target_Output;
 	string Application;
@@ -44,7 +46,7 @@ public:
 	string RRAMModel;
 	int TranTech;
 	string WriteMth;
-	string cfgtxt[23];
+	string *cfgtxt;
 	int Pipeline;
 
 };

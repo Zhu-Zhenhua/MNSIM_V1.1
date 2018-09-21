@@ -9,6 +9,7 @@ extern double output_sig;
 extern double signalsize;
 extern int netcolumn;
 extern int netrow,count;
+extern double utilization;
 extern double bandwidth;
 extern double flags[4];
 extern double xbar_area,techwl,ad_area,da_area,adder_area,pulse_area,decoder_area,read_area,write_area,Sub_area,area_u;
