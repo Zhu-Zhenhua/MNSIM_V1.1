@@ -1,8 +1,10 @@
 # MNSIM_V1.1
                               MNSIM version1.1 ReadMe
 
-=========================================================================================
+======================================================================================
+
 We have uploaded a high-level modeling tool and please use this version: https://github.com/Zhu-Zhenhua/MNSIM_Python
+
 ---------------------------------Update Information--------------------------------------
 1. Update the input parameters settings.
 2. Fix several bugs.
